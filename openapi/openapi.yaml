@@ -1,0 +1,941 @@
+openapi: 3.0.0
+info:
+  title: Reserveat API
+  version: 1.0.0
+  description: API for reserving tables in the restaurants using Reserveat
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development server
+paths:
+  /restaurants:
+    post:
+      tags:
+        - restaurant
+      summary: Create a new restaurant
+      operationId: createRestaurant
+      requestBody:
+        description: Restaurant details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/RestaurantInput.yaml'
+      responses:
+        '201':
+          description: Restaurant created successfully
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/RestaurantOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+  /restaurants/{restaurantId}:
+    get:
+      tags:
+        - restaurant
+      summary: Get a restaurant by ID
+      description: Returns a restaurant by ID
+      parameters:
+        - name: restaurant_id
+          in: path
+          description: ID of the restaurant to retrieve
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Restaurant retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: './components/responses/NotFound.yaml'
+        '401':
+          $ref: './components/responses/NotFound.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+    put:
+      summary: Edit a restaurant
+      description: Update information for an existing restaurant.
+      tags:
+        - restaurant
+      parameters:
+        - name: restaurantId
+          in: path
+          description: ID of the restaurant to update
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/RestaurantInput.yaml'
+      responses:
+        '200':
+          description: Restaurant updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/RestaurantOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+    delete:
+      tags:
+        - restaurant
+      summary: Delete a restaurant
+      description: Deletes a restaurant and all its locations
+      parameters:
+        - name: restaurant_id
+          in: path
+          description: ID of the restaurant to delete
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '204':
+          description: Restaurant deleted successfully
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+  /restaurants/{restaurantId}/locations:
+    post:
+      summary: Create a new location to a restaurant
+      tags:
+        - location
+      parameters:
+        - in: path
+          name: restaurantId
+          description: ID of the restaurant to which the location will be added
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/LocationInput.yaml'
+      responses:
+        '201':
+          description: Location created successfully
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/LocationOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+  /locations/{locationId}:
+    get:
+      summary: Get location details by ID
+      tags:
+        - location
+      parameters:
+        - in: path
+          name: restaurant_id
+          description: ID of the restaurant to get the location from
+          required: true
+          schema:
+            type: integer
+          example: 123
+        - in: path
+          name: locationId
+          description: ID of the location to get
+          required: true
+          schema:
+            type: integer
+          example: 456
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/LocationOutput.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+    put:
+      summary: Update location details by ID
+      tags:
+        - location
+      parameters:
+        - in: path
+          name: locationId
+          description: ID of the location to update
+          required: true
+          schema:
+            type: integer
+          example: 456
+        - in: header
+          name: Authorization
+          description: Access token
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationInput'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationOutput'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+    delete:
+      summary: Delete a location for a restaurant
+      tags:
+        - location
+      parameters:
+        - in: path
+          name: locationId
+          description: ID of the location to delete
+          required: true
+          schema:
+            type: integer
+          example: 456
+      responses:
+        '204':
+          description: Location deleted successfully
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+  /locations/{locationId}/photos:
+    post:
+      tags:
+        - location
+      summary: Add a photo to a location
+      description: Add a photo to a location in a restaurant
+      parameters:
+        - in: path
+          name: locationId
+          description: ID of the location
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                description:
+                  type: string
+                  description: A short description of the photo
+              required:
+                - file
+      responses:
+        '200':
+          description: Successfully added photo to the location
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/PhotoOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+    get:
+      tags:
+        - location
+      summary: Get all photos for a location.
+      parameters:
+        - in: path
+          name: locationId
+          required: true
+          description: ID of the location.
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          required: false
+          description: The maximum number of photos to return.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of photos for the location.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/PhotoOutput.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+  /locations/nearby:
+    get:
+      tags:
+        - location
+      summary: Get nearby locations
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          description: Latitude of the user's location
+          schema:
+            type: number
+            format: float
+            example: 37.7749
+        - name: longitude
+          in: query
+          required: true
+          description: Longitude of the user's location
+          schema:
+            type: number
+            format: float
+            example: -122.4194
+        - name: radius
+          in: query
+          required: false
+          description: Radius in meters
+          schema:
+            type: integer
+            format: int32
+            example: 1000
+        - name: limit
+          in: query
+          required: false
+          description: The maximum number of results to return (default 10)
+          schema:
+            type: integer
+            format: int32
+            example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/PaginatedLocationsWithRestaurantOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+  /locations/{locationId}/tables:
+    post:
+      tags:
+        - location
+      summary: Create a table at a location
+      description: Adds a new table with the given number of seats to the specified location.
+      operationId: createTable
+      parameters:
+        - name: locationId
+          in: path
+          description: ID of the location where the table will be created
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Optional additional data for the new table
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/TableInput.yaml'
+      responses:
+        '201':
+          description: Table created successfully
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/TableOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+  /locations/{locationId}/reservations:
+    post:
+      summary: Create a reservation for a table at the specified location
+      tags:
+        - reservation
+      parameters:
+        - in: path
+          name: locationId
+          required: true
+          description: ID of the location
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: Authorization
+          description: JWT token for authorization
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Request body for creating a reservation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/ReservationInput.yaml'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/ReservationOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+  /tables/{tableId}:
+    put:
+      summary: Update a table
+      tags:
+        - table
+      parameters:
+        - in: path
+          name: tableId
+          required: true
+          description: ID of the table to update
+          schema:
+            type: integer
+      requestBody:
+        description: New details for the table
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/TableInput.yaml'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/TableOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+  /reservations/{reservationId}:
+    get:
+      summary: Get a reservation by ID
+      tags:
+        - reservation
+      parameters:
+        - name: reservationId
+          in: path
+          description: ID of the reservation to retrieve
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/ReservationOutput.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+    put:
+      summary: Update a reservation by ID
+      tags:
+        - reservation
+      parameters:
+        - in: path
+          name: reservationId
+          schema:
+            type: integer
+          required: true
+          description: ID of the reservation to update
+      requestBody:
+        description: The reservation object to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components/schemas/ReservationInput.yaml'
+      responses:
+        '200':
+          description: Successfully updated the reservation
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/ReservationOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+    delete:
+      summary: Delete a reservation
+      tags:
+        - reservation
+      parameters:
+        - in: path
+          name: reservationId
+          description: ID of the reservation to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Reservation deleted successfully
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+  /tables/{locationId}:
+    get:
+      tags:
+        - table
+      summary: Get all tables by locationId
+      parameters:
+        - in: path
+          name: locationId
+          required: true
+          description: The ID of the location to get tables for
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/TableOutput.yaml'
+        '400':
+          $ref: './components/responses/BadRequest.yaml'
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+  /photos/{photoId}:
+    delete:
+      summary: Delete a photo by ID
+      tags:
+        - photo
+      parameters:
+        - in: path
+          name: photoId
+          required: true
+          description: Id of the photo to delete
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Successfully deleted the photo
+        '401':
+          $ref: './components/responses/Unauthorized.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'
+#  /restaurants/nearby:
+#    get:
+#      tags:
+#        - restaurant
+#      summary: Get nearby restaurants
+#      description: |
+#        Returns a paginated list of restaurants that are located within a certain distance of the specified coordinates.
+#      parameters:
+#        - name: latitude
+#          in: query
+#          description: Latitude of the location to search from
+#          required: true
+#          schema:
+#            type: number
+#            format: double
+#        - name: longitude
+#          in: query
+#          description: Longitude of the location to search from
+#          required: true
+#          schema:
+#            type: number
+#            format: double
+#        - name: radius
+#          in: query
+#          description: |
+#            Maximum distance (in meters) from the specified location to search for nearby restaurants.
+#            Default is 5000 meters.
+#          schema:
+#            type: integer
+#            format: int32
+#            minimum: 1
+#            maximum: 10000
+#            default: 5000
+#        - name: page
+#          in: query
+#          description: |
+#            Page number of results to return. Default is 1.
+#          schema:
+#            type: integer
+#            format: int32
+#            minimum: 1
+#            default: 1
+#        - name: page_size
+#          in: query
+#          description: |
+#            Maximum number of restaurants to return per page. Default is 10.
+#          schema:
+#            type: integer
+#            format: int32
+#            minimum: 1
+#            maximum: 50
+#            default: 10
+#      responses:
+#        '200':
+#          description: A paginated list of nearby restaurants
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/PaginatedRestaurantsOutput'
+#        '400':
+#          $ref: './components/responses/BadRequest.yaml'
+#        '401':
+#          $ref: './components/responses/Unauthorized.yaml'
+#  /restaurants/{restaurant_id}/tables/{table_id}/reservations:
+#    post:
+#      summary: Reserve a table at a restaurant
+#      description: |
+#        Reserves a table at the specified restaurant for the specified date and time.
+#      requestBody:
+#        description: The reservation details
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/ReservationInput'
+#      parameters:
+#        - name: restaurant_id
+#          in: path
+#          description: ID of the restaurant
+#          required: true
+#          schema:
+#            type: integer
+#            minimum: 1
+#        - name: table_id
+#          in: path
+#          description: ID of the table to reserve
+#          required: true
+#          schema:
+#            type: integer
+#            minimum: 1
+#        - in: body
+#          name: ReservationInput
+#          description: The reservation details
+#          required: true
+#          schema:
+#            $ref: '#/components/schemas/ReservationInput'
+#      responses:
+#        '201':
+#          description: Reservation created successfully
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/ReservationOutput'
+#        '400':
+#          description: Invalid input
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/BadRequest'
+#        '401':
+#          $ref: './components/responses/Unauthorized.yaml'
+#        '404':
+#          description: Restaurant or table not found
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/NotFound'
+#  /locations/{locationId}/hours:
+#    put:
+#      summary: Set working hours for a location
+#      description: Set the working hours for a specific location of a restaurant.
+#      tags:
+#        - location
+#      parameters:
+#        - name: locationId
+#          in: path
+#          description: ID of the location to update hours
+#          required: true
+#          schema:
+#            type: integer
+#            example: 1
+#      requestBody:
+#        required: true
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/HoursInput'
+#      responses:
+#        '200':
+#          description: Working hours updated successfully
+#        '400':
+#          $ref: './components/responses/BadRequest.yaml'
+#        '401':
+#          $ref: '#/components/responses/Unauthorized'
+#        '404':
+#          $ref: './components/responses/NotFound.yaml'
+#      security:
+#        - bearerAuth: [ ]
+#  /users/{userId}/reservations:
+#    get:
+#      summary: Retrieve a user's reservation history
+#      parameters:
+#        - in: path
+#          name: userId
+#          description: The ID of the user whose reservation history is being retrieved
+#          required: true
+#          schema:
+#            type: integer
+#        - in: query
+#          name: page
+#          description: 'The page number to retrieve (default: 1)'
+#          required: false
+#          schema:
+#            type: integer
+#            minimum: 1
+#        - in: query
+#          name: page_size
+#          description: 'The number of reservations to retrieve per page (default: 10)'
+#          required: false
+#          schema:
+#            type: integer
+#            minimum: 1
+#            maximum: 100
+#      responses:
+#        '200':
+#          description: A paginated list of reservations for the specified user
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/PaginatedReservationsOutput'
+#        '401':
+#          $ref: './components/responses/Unauthorized.yaml'
+#        '404':
+#          $ref: './components/responses/NotFound.yaml'
+#components:
+#  schemas:
+#    PhotoInput:
+#      type: object
+#      required:
+#        - url
+#      properties:
+#        url:
+#          type: string
+#          description: URL of the photo
+#        caption:
+#          type: string
+#          description: Caption
+#    PhotoOutput:
+#      type: object
+#      properties:
+#        id:
+#          type: string
+#          description: Unique ID of the photo
+#        url:
+#          type: string
+#          description: URL of the photo
+#        caption:
+#          type: string
+#          description: Caption for the photo
+#        createdAt:
+#          type: string
+#          format: date-time
+#          description: Date and time when the photo was created
+#      example:
+#        id: pqr456
+#        url: https://www.acmerestaurant.com/photos/1.jpg
+#        caption: Spaghetti and meatballs
+#        createdAt: '2023-03-05T11:30:00Z'
+#    HoursInput:
+#      type: object
+#      required:
+#        - dayOfWeek
+#        - opens
+#        - closes
+#      properties:
+#        dayOfWeek:
+#          type: string
+#          enum: [ MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY ]
+#          description: Day of the week when the restaurant is open
+#        opens:
+#          type: string
+#          format: time
+#          description: Opening time for the restaurant
+#        closes:
+#          type: string
+#          format: time
+#          description: Closing time for the restaurant
+#      example:
+#        dayOfWeek: MONDAY
+#        opens: '10:00'
+#        closes: '20:00'
+#    PaginatedRestaurantsOutput:
+#      type: object
+#      properties:
+#        total:
+#          type: integer
+#          description: The total number of restaurants matching the search criteria
+#        page:
+#          type: integer
+#          description: The current page number of results
+#        page_size:
+#          type: integer
+#          description: The maximum number of restaurants returned per page
+#        results:
+#          type: array
+#          items:
+#            $ref: '#/components/schemas/RestaurantOutput'
+#      required:
+#        - total
+#        - page
+#        - page_size
+#        - results
+#    PaginatedReservationsOutput:
+#      type: object
+#      properties:
+#        page:
+#          type: integer
+#          description: The current page number.
+#        page_size:
+#          type: integer
+#          description: The maximum number of reservations per page.
+#        total:
+#          type: integer
+#          description: The total number of reservations.
+#        reservations:
+#          type: array
+#          items:
+#            $ref: '#/components/schemas/ReservationOutput'
+#          description: The list of reservations for the specified page.
+#      example:
+#        page: 1
+#        page_size: 10
+#        total: 20
+#        reservations:
+#          - id: 1
+#            restaurant_id: 1
+#            user_id: 1
+#            table_number: 5
+#            date_time: "2022-01-01T12:00:00Z"
+#            duration: 60
+#            status: confirmed
+#          - id: 2
+#            restaurant_id: 2
+#            user_id: 1
+#            table_number: 10
+#            date_time: "2022-01-01T18:00:00Z"
+#            duration: 90
+#            status: cancelled
+#    ReservationInput:
+#      type: object
+#      properties:
+#        restaurant_id:
+#          type: integer
+#          description: The unique identifier for the restaurant.
+#        table_number:
+#          type: integer
+#          description: The table number for the reservation.
+#        date_time:
+#          type: string
+#          format: date-time
+#          description: The date and time for the reservation.
+#        duration:
+#          type: integer
+#          description: The duration of the reservation in minutes.
+#      required:
+#        - date_time
+#        - duration
+#      example:
+#        date_time: "2022-01-01T12:00:00Z"
+#        duration: 60
+#    ReservationOutput:
+#      type: object
+#      properties:
+#        id:
+#          type: integer
+#          description: The unique identifier for the reservation.
+#        restaurant_id:
+#          type: integer
+#          description: The unique identifier for the restaurant.
+#        user_id:
+#          type: integer
+#          description: The unique identifier for the user who made the reservation.
+#        table_number:
+#          type: integer
+#          description: The table number assigned for the reservation.
+#        date_time:
+#          type: string
+#          format: date-time
+#          description: The date and time of the reservation.
+#        duration:
+#          type: integer
+#          description: The duration of the reservation in minutes.
+#        status:
+#          $ref: '#/components/schemas/ReservationStatus'
+#          description: The status of the reservation.
+#        restaurant:
+#          $ref: '#/components/schemas/RestaurantOutput'
+#          description: The restaurant object for the reservation.
+#      example:
+#        id: 1
+#        restaurant_id: 1
+#        user_id: 1
+#        table_number: 5
+#        date_time: "2022-01-01T12:00:00Z"
+#        duration: 60
+#        status: confirmed
+#        restaurant:
+#          id: 1
+#          name: Example Restaurant
+#          description: This is an example restaurant.
+#          phone: "+1234567890"
+#          website: "https://www.example.com"
+#          locations:
+#            - id: 1
+#              address: "123 Main St."
+#              city: "Example City"
+#    ReservationStatus:
+#      type: string
+#      enum:
+#        - pending
+#        - confirmed
+#        - cancelled
+#        - refused
+#      example: pending`

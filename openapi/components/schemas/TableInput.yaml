@@ -1,0 +1,8 @@
+type: object
+properties:
+  numberOfSeats:
+    type: string
+    minimum: 1
+    description: Number of seats at the new table
+example:
+  numberOfSeats: 4

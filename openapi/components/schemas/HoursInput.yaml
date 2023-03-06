@@ -1,0 +1,22 @@
+type: object
+required:
+  - dayOfWeek
+  - opens
+  - closes
+properties:
+  dayOfWeek:
+    type: string
+    enum: [ MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY ]
+    description: Day of the week when the restaurant is open
+  opens:
+    type: string
+    format: time
+    description: Opening time for the restaurant
+  closes:
+    type: string
+    format: time
+    description: Closing time for the restaurant
+example:
+  dayOfWeek: MONDAY
+  opens: '10:00'
+  closes: '20:00'

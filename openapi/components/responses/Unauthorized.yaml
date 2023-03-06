@@ -1,0 +1,5 @@
+description: The request requires authentication or authorization, but the user is not authenticated or authorized
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'

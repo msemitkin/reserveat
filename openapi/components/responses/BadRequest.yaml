@@ -1,0 +1,5 @@
+description: The request was malformed or invalid
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'

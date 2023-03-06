@@ -1,0 +1,20 @@
+type: object
+properties:
+  total:
+    type: integer
+    description: The total number of locations.
+  limit:
+    type: integer
+    description: The limit used to retrieve locations.
+  offset:
+    type: integer
+    description: The offset used to retrieve locations.
+  locations:
+    type: array
+    items:
+      $ref: './LocationWithRestaurantOutput.yaml'
+required:
+  - total
+  - limit
+  - offset
+  - locations

@@ -1,0 +1,25 @@
+allOf:
+  - $ref: './LocationInput.yaml'
+  - type: object
+    properties:
+      id:
+        type: string
+        description: Unique ID of the restaurant location
+      createdAt:
+        type: string
+        format: date-time
+        description: Date and time when the restaurant location was created
+    example:
+      id: xyz789
+      address: 123 Main St
+      latitude: 42.3601
+      longitude: -71.0589
+      phone: +1 (555) 555-1212
+      hours:
+        - dayOfWeek: MONDAY
+          opens: '10:00'
+          closes: '20:00'
+        - dayOfWeek: TUESDAY
+          opens: '10:00'
+          closes: '20:00'
+      createdAt: '2023-03-05T10:30:00Z'

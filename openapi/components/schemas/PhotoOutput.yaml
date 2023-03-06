@@ -1,0 +1,12 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: The unique identifier of the photo.
+  url:
+    type: string
+    format: uri
+    description: The URL where the photo can be accessed.
+example:
+  id: 1
+  url: https://example.com/photos/1

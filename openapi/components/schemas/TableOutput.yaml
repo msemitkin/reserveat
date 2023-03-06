@@ -1,0 +1,16 @@
+type: object
+properties:
+  id:
+    type: integer
+    description: Unique identifier of the table
+  locationId:
+    type: integer
+    description: ID of the location where the table is located
+  numberOfSeats:
+    type: integer
+    minimum: 1
+    description: Number of seats at the table
+example:
+  id: 150
+  locationId: 10
+  numberOfSeats: 4

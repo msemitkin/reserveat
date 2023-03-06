@@ -1,0 +1,13 @@
+type: object
+required:
+  - name
+properties:
+  name:
+    type: string
+    description: Name of the restaurant
+  description:
+    type: string
+    description: Description of the restaurant
+example:
+  name: Acme Restaurant
+  description: A cozy little restaurant serving Italian cuisine

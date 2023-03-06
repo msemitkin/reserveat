@@ -1,0 +1,26 @@
+type: object
+properties:
+  id:
+    type: integer
+    format: integer
+    description: The unique identifier for the reservation.
+  locationId:
+    type: integer
+    format: integer
+    description: The unique identifier for the location where the reservation is made.
+  startTime:
+    type: string
+    format: date-time
+    description: The start time of the reservation.
+  endTime:
+    type: string
+    format: date-time
+    description: The end time of the reservation.
+  numberOfPeople:
+    type: integer
+    format: integer
+    description: The number of people for the reservation.
+  tableId:
+    type: integer
+    format: integer
+    description: The unique identifier for the table for the reservation.
