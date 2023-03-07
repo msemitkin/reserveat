@@ -191,14 +191,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LocationInput'
+              $ref: './components/schemas/LocationInput.yaml'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LocationOutput'
+                $ref: './components/schemas/LocationOutput.yaml'
         '400':
           $ref: './components/responses/BadRequest.yaml'
         '401':

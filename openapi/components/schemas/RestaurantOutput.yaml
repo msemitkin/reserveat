@@ -3,16 +3,10 @@ allOf:
   - type: object
     properties:
       id:
-        type: string
-        description: Unique ID of the restaurant
-      createdAt:
-        type: string
-        format: date-time
-        description: Date and time when the restaurant was created
+        type: integer
     example:
       id: abc123
       name: Acme Restaurant
       description: A cozy little restaurant serving Italian cuisine
       cuisine: Italian
       website: https://www.acmerestaurant.com
-      createdAt: '2023-03-05T09:30:00Z'
