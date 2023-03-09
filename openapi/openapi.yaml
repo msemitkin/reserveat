@@ -10,7 +10,7 @@ paths:
   /restaurants:
     post:
       tags:
-        - restaurant
+        - Restaurant
       summary: Create a new restaurant
       operationId: createRestaurant
       requestBody:
@@ -32,7 +32,7 @@ paths:
   /restaurants/{restaurantId}:
     get:
       tags:
-        - restaurant
+        - Restaurant
       summary: Get a restaurant by ID
       description: Returns a restaurant by ID
       parameters:
@@ -58,7 +58,7 @@ paths:
       summary: Edit a restaurant
       description: Update information for an existing restaurant.
       tags:
-        - restaurant
+        - Restaurant
       parameters:
         - name: restaurantId
           in: path
@@ -88,7 +88,7 @@ paths:
           $ref: './components/responses/NotFound.yaml'
     delete:
       tags:
-        - restaurant
+        - Restaurant
       summary: Delete a restaurant
       description: Deletes a restaurant and all its locations
       parameters:
@@ -110,7 +110,7 @@ paths:
     post:
       summary: Create a new location to a restaurant
       tags:
-        - location
+        - Location
       parameters:
         - in: path
           name: restaurantId
@@ -141,7 +141,7 @@ paths:
     get:
       summary: Get location details by ID
       tags:
-        - location
+        - Location
       parameters:
         - in: path
           name: locationId
@@ -164,7 +164,7 @@ paths:
     put:
       summary: Update location details by ID
       tags:
-        - location
+        - Location
       parameters:
         - in: path
           name: locationId
@@ -201,7 +201,7 @@ paths:
     delete:
       summary: Delete a location for a restaurant
       tags:
-        - location
+        - Location
       parameters:
         - in: path
           name: locationId
@@ -220,7 +220,7 @@ paths:
   /locations/{locationId}/photos:
     post:
       tags:
-        - location
+        - Location
       summary: Add a photo to a location
       description: Add a photo to a location in a restaurant
       parameters:
@@ -260,7 +260,7 @@ paths:
           $ref: './components/responses/NotFound.yaml'
     get:
       tags:
-        - location
+        - Location
       summary: Get all photos for a location.
       parameters:
         - in: path
@@ -291,7 +291,7 @@ paths:
   /locations/nearby:
     get:
       tags:
-        - location
+        - Location
       summary: Get nearby locations
       parameters:
         - name: latitude
@@ -340,7 +340,7 @@ paths:
   /locations/{locationId}/tables:
     post:
       tags:
-        - location
+        - Location
       summary: Create a table at a location
       description: Adds a new table with the given number of seats to the specified location.
       operationId: createTable
@@ -375,7 +375,7 @@ paths:
     post:
       summary: Create a reservation for a table at the specified location
       tags:
-        - reservation
+        - Reservation
       parameters:
         - in: path
           name: locationId
@@ -414,7 +414,7 @@ paths:
     put:
       summary: Update a table
       tags:
-        - table
+        - Table
       parameters:
         - in: path
           name: tableId
@@ -446,7 +446,7 @@ paths:
     get:
       summary: Get a reservation by ID
       tags:
-        - reservation
+        - Reservation
       parameters:
         - name: reservationId
           in: path
@@ -468,7 +468,7 @@ paths:
     put:
       summary: Update a reservation by ID
       tags:
-        - reservation
+        - Reservation
       parameters:
         - in: path
           name: reservationId
@@ -499,7 +499,7 @@ paths:
     delete:
       summary: Delete a reservation
       tags:
-        - reservation
+        - Reservation
       parameters:
         - in: path
           name: reservationId
@@ -515,7 +515,7 @@ paths:
   /tables/{locationId}:
     get:
       tags:
-        - table
+        - Table
       summary: Get all tables by locationId
       parameters:
         - in: path
@@ -543,7 +543,7 @@ paths:
     delete:
       summary: Delete a photo by ID
       tags:
-        - photo
+        - Photo
       parameters:
         - in: path
           name: photoId
