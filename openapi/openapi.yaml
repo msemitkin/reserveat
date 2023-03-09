@@ -49,9 +49,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components/responses/NotFound.yaml'
+                $ref: './components/schemas/RestaurantOutput.yaml'
         '401':
-          $ref: './components/responses/NotFound.yaml'
+          $ref: './components/responses/Unauthorized.yaml'
         '404':
           $ref: './components/responses/NotFound.yaml'
     put:
