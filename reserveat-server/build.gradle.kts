@@ -57,7 +57,7 @@ tasks.openApiGenerate {
     }
 }
 
-tasks.build {
+tasks.compileJava.configure {
     dependsOn("openApiGenerate")
 }
 
