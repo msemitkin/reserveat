@@ -14,6 +14,10 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2")
     implementation("org.openapitools:jackson-databind-nullable:0.2.3")
+
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.postgresql:postgresql")
+    implementation("org.flywaydb:flyway-core")
 }
 
 tasks.getByName<Test>("test") {

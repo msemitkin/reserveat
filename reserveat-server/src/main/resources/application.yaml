@@ -5,3 +5,9 @@ springdoc:
     path: /v3/api-docs/
   swagger-ui:
     path: /swagger-ui.html
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/reserveat
+    username: reserveat
+    password: reserveat

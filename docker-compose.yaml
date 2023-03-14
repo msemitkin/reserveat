@@ -1,0 +1,9 @@
+services:
+  reserveat-database:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=reserveat
+      - POSTGRES_USER=reserveat
+      - POSTGRES_PASSWORD=reserveat
+    ports:
+      - "5432:5432"
