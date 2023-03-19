@@ -29,7 +29,7 @@ public class RestaurantRepository {
     @NonNull
     public Restaurant createRestaurant(@NonNull Restaurant restaurant) {
         String query = "insert into restaurant (\"name\", description) values (:name, :description) returning id";
-        var params = Map.of("name", restaurant.getName(), "description ", restaurant.getDescription());
+        var params = Map.of("name", restaurant.getName(), "description", restaurant.getDescription());
 
         Integer idOfRestaurant = jdbcTemplate.queryForObject(query, params, Integer.class);
 
