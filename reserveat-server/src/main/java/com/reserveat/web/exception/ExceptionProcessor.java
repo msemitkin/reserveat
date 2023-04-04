@@ -1,5 +1,6 @@
 package com.reserveat.web.exception;
 
+import com.reserveat.domain.exception.LocationNotFoundException;
 import com.reserveat.domain.exception.RestaurantNotFoundException;
 import com.reserveat.web.model.ErrorDto;
 import jakarta.validation.ConstraintViolationException;
@@ -14,8 +15,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionProcessor {
     private static final Logger logger = LoggerFactory.getLogger(ExceptionProcessor.class);
 
-    @ExceptionHandler(RestaurantNotFoundException.class)
-    public ResponseEntity<ErrorDto> handleRestaurantNotFoundException(RestaurantNotFoundException ignored) {
+    @ExceptionHandler({
+        RestaurantNotFoundException.class,
+        LocationNotFoundException.class
+    })
+    public ResponseEntity<ErrorDto> handleRestaurantNotFoundException() {
         ErrorDto errorDto = new ErrorDto()
             .code(HttpStatus.NOT_FOUND.name())
             .message(HttpStatus.NOT_FOUND.getReasonPhrase());
