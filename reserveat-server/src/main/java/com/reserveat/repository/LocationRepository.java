@@ -1,6 +1,7 @@
 package com.reserveat.repository;
 
 import com.reserveat.domain.Location;
+import com.reserveat.domain.LocationCoordinates;
 import com.reserveat.web.DayWorkingHours;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +39,22 @@ public class LocationRepository {
             location.phone(),
             location.workingHours()
         );
+    }
+
+    public List<LocationCoordinates> getLocationsCoordinates() {
+        try (
+            var stream = jdbcTemplate.queryForStream("""
+                    SELECT * FROM restaurant_location
+                    """, Map.of(), (rs, rowNum) -> new LocationCoordinates(
+                    rs.getInt("id"),
+                    rs.getInt("restaurant_id"),
+                    rs.getDouble("latitude"),
+                    rs.getDouble("longitude")
+                )
+            )
+        ) {
+            return stream.toList();
+        }
     }
 
     public Optional<Location> findById(int id) {
