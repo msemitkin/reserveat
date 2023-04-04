@@ -109,6 +109,7 @@ paths:
           $ref: './components/responses/Unauthorized.yaml'
   /restaurants/{restaurantId}/locations:
     post:
+      operationId: createLocation
       summary: Create a new location to a restaurant
       tags:
         - Location
@@ -118,7 +119,7 @@ paths:
           description: ID of the restaurant to which the location will be added
           required: true
           schema:
-            type: string
+            type: integer
       requestBody:
         required: true
         content:
@@ -141,6 +142,7 @@ paths:
   /locations/{locationId}:
     get:
       summary: Get location details by ID
+      operationId: getLocationById
       tags:
         - Location
       parameters:
@@ -164,6 +166,7 @@ paths:
           $ref: './components/responses/NotFound.yaml'
     put:
       summary: Update location details by ID
+      operationId: updateLocation
       tags:
         - Location
       parameters:
@@ -174,12 +177,6 @@ paths:
           schema:
             type: integer
           example: 456
-        - in: header
-          name: Authorization
-          description: Access token
-          required: true
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -201,6 +198,7 @@ paths:
           $ref: './components/responses/NotFound.yaml'
     delete:
       summary: Delete a location for a restaurant
+      operationId: deleteLocation
       tags:
         - Location
       parameters:
@@ -216,12 +214,11 @@ paths:
           description: Location deleted successfully
         '401':
           $ref: './components/responses/Unauthorized.yaml'
-        '404':
-          $ref: './components/responses/NotFound.yaml'
   /locations/{locationId}/photos:
     post:
       tags:
-        - Location
+        - Photo
+      operationId: addPhotoToLocation
       summary: Add a photo to a location
       description: Add a photo to a location in a restaurant
       parameters:
@@ -261,19 +258,14 @@ paths:
           $ref: './components/responses/NotFound.yaml'
     get:
       tags:
-        - Location
+        - Photo
+      operationId: getLocationPhotos
       summary: Get all photos for a location.
       parameters:
         - in: path
           name: locationId
           required: true
           description: ID of the location.
-          schema:
-            type: integer
-        - in: query
-          name: limit
-          required: false
-          description: The maximum number of photos to return.
           schema:
             type: integer
       responses:
@@ -293,6 +285,7 @@ paths:
     get:
       tags:
         - Location
+      operationId: getNearbyLocations
       summary: Get nearby locations
       parameters:
         - name: latitude
@@ -319,29 +312,21 @@ paths:
             type: integer
             format: int32
             example: 1000
-        - name: limit
-          in: query
-          required: false
-          description: The maximum number of results to return (default 10)
-          schema:
-            type: integer
-            format: int32
-            example: 20
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components/schemas/PaginatedLocationsWithRestaurantOutput.yaml'
+                $ref: './components/schemas/LocationsWithRestaurantOutput.yaml'
         '400':
           $ref: './components/responses/BadRequest.yaml'
         '401':
           $ref: './components/responses/Unauthorized.yaml'
-  /locations/{locationId}/tables:
+  /tables/locations/{locationId}:
     post:
       tags:
-        - Location
+        - Table
       summary: Create a table at a location
       description: Adds a new table with the given number of seats to the specified location.
       operationId: createTable
@@ -414,6 +399,7 @@ paths:
   /tables/{tableId}:
     put:
       summary: Update a table
+      operationId: updateTable
       tags:
         - Table
       parameters:
@@ -517,6 +503,7 @@ paths:
     get:
       tags:
         - Table
+      operationId: getLocationTables
       summary: Get all tables by locationId
       parameters:
         - in: path

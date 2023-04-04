@@ -3,10 +3,10 @@ allOf:
   - type: object
     properties:
       id:
-        type: string
+        type: integer
         description: Unique ID of the restaurant location
     example:
-      id: xyz789
+      id: 1
       address: 123 Main St
       latitude: 42.3601
       longitude: -71.0589

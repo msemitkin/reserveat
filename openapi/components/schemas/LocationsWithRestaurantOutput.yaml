@@ -1,0 +1,11 @@
+type: object
+properties:
+  locations:
+    type: array
+    items:
+      $ref: './LocationWithRestaurantOutput.yaml'
+required:
+  - total
+  - limit
+  - offset
+  - locations
