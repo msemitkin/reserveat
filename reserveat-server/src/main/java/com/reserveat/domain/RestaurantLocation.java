@@ -1,7 +1,5 @@
 package com.reserveat.domain;
 
-import com.reserveat.web.DayWorkingHours;
-
 import java.time.DayOfWeek;
 import java.util.Map;
 

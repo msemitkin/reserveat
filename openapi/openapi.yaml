@@ -238,9 +238,6 @@ paths:
                 file:
                   type: string
                   format: binary
-                description:
-                  type: string
-                  description: A short description of the photo
               required:
                 - file
       responses:
@@ -530,6 +527,7 @@ paths:
   /photos/{photoId}:
     delete:
       summary: Delete a photo by ID
+      operationId: deletePhoto
       tags:
         - Photo
       parameters:
@@ -538,7 +536,7 @@ paths:
           required: true
           description: Id of the photo to delete
           schema:
-            type: integer
+            type: string
       responses:
         '204':
           description: Successfully deleted the photo

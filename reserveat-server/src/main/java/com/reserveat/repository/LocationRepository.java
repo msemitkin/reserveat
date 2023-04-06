@@ -1,7 +1,7 @@
 package com.reserveat.repository;
 
 import com.reserveat.domain.Location;
-import com.reserveat.web.DayWorkingHours;
+import com.reserveat.domain.DayWorkingHours;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;

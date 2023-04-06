@@ -17,7 +17,7 @@ create table restaurant_location
 
 create table location_photo
 (
-    id          serial primary key,
+    id          varchar primary key,
     location_id int     not null references restaurant_location (id),
     photo_url   varchar not null
 );
