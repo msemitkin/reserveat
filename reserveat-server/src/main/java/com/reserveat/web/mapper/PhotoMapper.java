@@ -3,8 +3,6 @@ package com.reserveat.web.mapper;
 import com.reserveat.domain.Photo;
 import com.reserveat.web.model.PhotoOutputDto;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 public class PhotoMapper {
@@ -12,13 +10,9 @@ public class PhotoMapper {
     }
 
     public static PhotoOutputDto fromPhoto(Photo photo) {
-        try {
-            return new PhotoOutputDto()
-                .id(photo.getId())
-                .url(new URI(photo.getUrl()));
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        return new PhotoOutputDto()
+            .id(photo.id())
+            .url(photo.url());
     }
 
     public static List<PhotoOutputDto> fromPhotos(List<Photo> photos) {

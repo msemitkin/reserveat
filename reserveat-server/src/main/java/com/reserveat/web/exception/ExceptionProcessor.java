@@ -1,6 +1,7 @@
 package com.reserveat.web.exception;
 
 import com.reserveat.domain.exception.LocationNotFoundException;
+import com.reserveat.domain.exception.PhotoNotFoundException;
 import com.reserveat.domain.exception.RestaurantNotFoundException;
 import com.reserveat.web.model.ErrorDto;
 import jakarta.validation.ConstraintViolationException;
@@ -17,7 +18,8 @@ public class ExceptionProcessor {
 
     @ExceptionHandler({
         RestaurantNotFoundException.class,
-        LocationNotFoundException.class
+        LocationNotFoundException.class,
+        PhotoNotFoundException.class
     })
     public ResponseEntity<ErrorDto> handleRestaurantNotFoundException() {
         ErrorDto errorDto = new ErrorDto()

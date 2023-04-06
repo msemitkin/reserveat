@@ -1,7 +1,7 @@
 package com.reserveat.web.mapper;
 
 import com.reserveat.domain.Location;
-import com.reserveat.web.DayWorkingHours;
+import com.reserveat.domain.DayWorkingHours;
 import com.reserveat.web.model.HoursInputDto;
 import com.reserveat.web.model.LocationInputDto;
 import com.reserveat.web.model.LocationOutputDto;

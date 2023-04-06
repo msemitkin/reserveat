@@ -1,4 +1,4 @@
-package com.reserveat.web;
+package com.reserveat.domain;
 
 import java.time.LocalTime;
 
