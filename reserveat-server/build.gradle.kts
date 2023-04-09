@@ -69,6 +69,10 @@ tasks.compileJava.configure {
     dependsOn("openApiGenerate")
 }
 
+tasks.compileKotlin.configure {
+    dependsOn("openApiGenerate")
+}
+
 sourceSets {
     getByName("main") {
         java {
