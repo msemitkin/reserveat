@@ -1,66 +1,50 @@
 package com.reserveat.repository
 
 import com.reserveat.domain.Table
-import com.reserveat.domain.dto.TableDto
-import com.reserveat.domain.dto.TableOutputDto
-import com.reserveat.web.mapper.TableMapper
-import com.reserveat.web.mapper.TableOutputMapper
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
-import org.springframework.jdbc.support.GeneratedKeyHolder
-import org.springframework.stereotype.Repository
-import java.sql.Statement
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.stereotype.Component
 
-@Repository
+//Component annotation is used here to override default Spring CGLIB proxy used for @Repository's
+@Component
 class TableRepository(
-    private val jdbcTemplate: JdbcTemplate
+    private val jdbcTemplate: NamedParameterJdbcTemplate
 ) {
-    fun save(
-        locationId: Long, table: Table
-    ): Table {
-        val keyHolder = GeneratedKeyHolder()
-        jdbcTemplate.update({ connection ->
-            val ps = connection.prepareStatement(
-                    """
-                INSERT INTO tables (location_id, number_of_seats)
-                VALUES (?, ?)
-                """,
-                    Statement.RETURN_GENERATED_KEYS
+    companion object {
+        var TABLE_ROW_MAPPER = RowMapper { rs, _ ->
+            Table(
+                id = rs.getInt("id"),
+                locationId = rs.getInt("location_id"),
+                numberOfSeats = rs.getInt("number_of_seats")
             )
-            ps.setLong(1, locationId)
-            ps.setInt(2, table.numberOfSeats)
-            ps
-        }, keyHolder)
-        val tableId = keyHolder.key!!.toLong()
-        return table.copy(id = tableId)
+        }
     }
 
-    fun update(
-        table: Table
-    ): Table {
-        jdbcTemplate.update(
-                """
-            UPDATE tables
-            SET number_of_seats = ?
-            WHERE id = ?
-            """,
-                table.numberOfSeats,
-                table.id
+    fun save(table: Table): Table {
+        return jdbcTemplate.queryForObject(
+            """
+                INSERT INTO "table" (location_id, number_of_seats)
+                VALUES (:location_id, :number_of_seats)
+                RETURNING id
+                """,
+            mapOf(
+                "location_id" to table.locationId,
+                "number_of_seats" to table.numberOfSeats
+            )
+        ) { rs, _ -> table.copy(id = rs.getInt("id")) }!!
+    }
+
+    fun findByLocationId(locationId: Int): List<Table> {
+        val queryForStream = jdbcTemplate.queryForStream(
+            """
+                SELECT * FROM "table"
+                WHERE location_id = :location_id 
+                """,
+            mapOf("location_id" to locationId),
+            TABLE_ROW_MAPPER
         )
-        return table
+        queryForStream.use {
+            return queryForStream.toList()
+        }
     }
-
-    fun findByLocationId(
-        locationId: Long
-    ): List<TableOutputDto> {
-        return jdbcTemplate.query(
-                """
-        SELECT * FROM tables
-        WHERE location_id = ?
-        """,
-                TableMapper(),
-                locationId
-        ).map { table -> TableOutputMapper.fromTable(table) }
-    }
-
 }

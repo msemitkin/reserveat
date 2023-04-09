@@ -335,8 +335,7 @@ paths:
           schema:
             type: integer
       requestBody:
-        description: Optional additional data for the new table
-        required: false
+        required: true
         content:
           application/json:
             schema:
@@ -387,39 +386,6 @@ paths:
             application/json:
               schema:
                 $ref: './components/schemas/ReservationOutput.yaml'
-        '400':
-          $ref: './components/responses/BadRequest.yaml'
-        '401':
-          $ref: './components/responses/Unauthorized.yaml'
-        '404':
-          $ref: './components/responses/NotFound.yaml'
-  /tables/{tableId}:
-    put:
-      summary: Update a table
-      operationId: updateTable
-      tags:
-        - Table
-      parameters:
-        - in: path
-          name: tableId
-          required: true
-          description: ID of the table to update
-          schema:
-            type: integer
-      requestBody:
-        description: New details for the table
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components/schemas/TableInput.yaml'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components/schemas/TableOutput.yaml'
         '400':
           $ref: './components/responses/BadRequest.yaml'
         '401':

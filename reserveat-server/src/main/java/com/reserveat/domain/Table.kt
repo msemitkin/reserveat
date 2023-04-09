@@ -1,7 +1,7 @@
 package com.reserveat.domain
 
 data class Table(
-    val id: Long,
-    val locationId: Long,
+    val id: Int?,
+    val locationId: Int,
     val numberOfSeats: Int
 )
