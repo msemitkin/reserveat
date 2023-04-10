@@ -19,7 +19,8 @@ public class ExceptionProcessor {
     @ExceptionHandler({
         RestaurantNotFoundException.class,
         LocationNotFoundException.class,
-        PhotoNotFoundException.class
+        PhotoNotFoundException.class,
+        ResourceNotFoundException.class
     })
     public ResponseEntity<ErrorDto> handleRestaurantNotFoundException() {
         ErrorDto errorDto = new ErrorDto()
@@ -34,6 +35,14 @@ public class ExceptionProcessor {
             .code(HttpStatus.BAD_REQUEST.name())
             .message(HttpStatus.BAD_REQUEST.getReasonPhrase());
         return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ReservationConflictException.class)
+    public ResponseEntity<ErrorDto> handleReservationConflictException() {
+        ErrorDto errorDto = new ErrorDto()
+            .code(HttpStatus.CONFLICT.name())
+            .message(HttpStatus.CONFLICT.getReasonPhrase());
+        return new ResponseEntity<>(errorDto, HttpStatus.CONFLICT);
     }
 
     //generic handler for all non-handled exceptions

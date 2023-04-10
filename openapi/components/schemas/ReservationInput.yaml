@@ -6,15 +6,12 @@ properties:
     description: Start time of the reservation
   duration:
     type: integer
+    minimum: 1
     description: Duration of the reservation in minutes
   numberOfPeople:
     type: integer
     description: Number of people for the reservation
-  tableId:
-    type: integer
-    description: ID of the table for the reservation
 required:
   - startTime
   - duration
   - numberOfPeople
-  - tableId

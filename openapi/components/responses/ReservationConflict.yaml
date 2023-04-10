@@ -1,0 +1,5 @@
+description: The reservation cannot be created on the specified time period
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'

@@ -1,79 +1,45 @@
 package com.reserveat.web.controller
 
+import com.reserveat.service.LocationService
 import com.reserveat.service.ReservationService
-import com.reserveat.web.exception.ReservationConflictException
+import com.reserveat.web.api.ReservationApi
 import com.reserveat.web.exception.ResourceNotFoundException
-import com.reserveat.web.mapper.ReservationMapper
-import org.springframework.http.HttpStatus
+import com.reserveat.web.mapper.toOutputDto
+import com.reserveat.web.mapper.toReservation
+import com.reserveat.web.model.ReservationInputDto
+import com.reserveat.web.model.ReservationOutputDto
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
-import java.net.URI
+import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/locations/{locationId}/reservations")
-class ReservationController(
+open class ReservationController(
     private val reservationService: ReservationService,
-    private val reservationMapper: ReservationMapper
-) {
-    @PostMapping("")
-    fun createReservation(
-        @PathVariable locationId: Int,
-        @RequestBody inputDto: ReservationInputDto
-    ): ResponseEntity<ReservationOutputDto> {
-            val reservation = reservationMapper.toReservation(inputDto)
-            reservation.locationId = locationId
+    private val locationService: LocationService
+) : ReservationApi {
 
-            try {
-                val savedReservation = reservationService.createReservation(reservation)
-                val outputDto = reservationMapper.toOutputDto(savedReservation)
-                return ResponseEntity.ok(outputDto)
-            } catch (ex: ReservationConflictException) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build()
-            } catch (ex: ResourceNotFoundException) {
-                return ResponseEntity.notFound().build()
-            }
-        }
-
-    @GetMapping("/{reservationId}")
-    fun getReservationById(
-        @PathVariable reservationId: Int,
-        @PathVariable locationId: String
+    override fun createReservation(
+        tableId: Int,
+        reservationInputDto: ReservationInputDto
     ): ResponseEntity<ReservationOutputDto> {
+        val reservation = reservationInputDto.toReservation(tableId)
+
+        val savedReservation = reservationService.createReservation(reservation)
+
+        val location = locationService.getLocationByReservationId(savedReservation.id!!)
+        val outputDto = savedReservation.toOutputDto(location.id)
+        return ResponseEntity.ok(outputDto)
+    }
+
+    override fun getReservationById(reservationId: Int): ResponseEntity<ReservationOutputDto> {
         val reservation = reservationService.getReservationById(reservationId)
-
-        if (reservation != null) {
-            val outputDto = reservationMapper.toOutputDto(reservation)
-            return ResponseEntity.ok(outputDto)
-        } else {
-            return ResponseEntity.notFound().build()
-        }
+            ?: throw ResourceNotFoundException("Reservation not found")
+        val location = locationService.getLocationByReservationId(reservationId)
+        val outputDto = reservation.toOutputDto(location.id)
+        return ResponseEntity.ok(outputDto)
     }
 
-    @PutMapping("/{reservationId}")
-    fun updateReservationById(
-        @PathVariable reservationId: Int,
-        @RequestBody inputDto: ReservationInputDto
-    ): ResponseEntity<Unit> {
-        val reservation = reservationMapper.toReservation(inputDto)
-        reservation.id = reservationId
-
-        try {
-            reservationService.updateReservation(reservation)
-            return ResponseEntity.noContent().build()
-        } catch (ex: ResourceNotFoundException) {
-            return ResponseEntity.notFound().build()
-        }
-    }
-
-    @DeleteMapping("/{reservationId}")
-    fun deleteReservationById(
-        @PathVariable reservationId: Int
-    ): ResponseEntity<Unit> {
-        try {
-            reservationService.deleteReservation(reservationId)
-            return ResponseEntity.noContent().build()
-        } catch (ex: ResourceNotFoundException) {
-            return ResponseEntity.notFound().build()
-        }
+    override fun deleteReservation(reservationId: Int): ResponseEntity<Void> {
+        reservationService.deleteReservation(reservationId)
+        return ResponseEntity.ok().build()
     }
 }
