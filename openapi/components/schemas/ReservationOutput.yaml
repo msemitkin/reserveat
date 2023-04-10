@@ -16,10 +16,6 @@ properties:
     type: string
     format: date-time
     description: The end time of the reservation.
-  numberOfPeople:
-    type: integer
-    format: integer
-    description: The number of people for the reservation.
   tableId:
     type: integer
     format: integer

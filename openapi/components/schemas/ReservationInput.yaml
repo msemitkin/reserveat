@@ -8,10 +8,6 @@ properties:
     type: integer
     minimum: 1
     description: Duration of the reservation in minutes
-  numberOfPeople:
-    type: integer
-    description: Number of people for the reservation
 required:
   - startTime
   - duration
-  - numberOfPeople
