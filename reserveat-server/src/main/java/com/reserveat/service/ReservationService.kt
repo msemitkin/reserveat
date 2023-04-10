@@ -44,7 +44,6 @@ open class ReservationService(
         validateDurationDoesNotExceedMaxAllowed(slot)
         validateSlotIsFree(slot, table)
 
-        //TODO validate number of people
         reservationRepository.save(reservation)
     }
 

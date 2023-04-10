@@ -20,6 +20,5 @@ fun Reservation.toOutputDto(locationId: Int): ReservationOutputDto {
         .locationId(locationId)
         .startTime(this.startTime)
         .endTime(this.endTime)
-        .numberOfPeople(-1)
         .tableId(this.tableId)
 }
