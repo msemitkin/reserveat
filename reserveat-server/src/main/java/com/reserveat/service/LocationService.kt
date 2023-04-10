@@ -24,6 +24,10 @@ class LocationService(
         }
     }
 
+    fun getLocationByReservationId(id: Int): Location {
+        return locationRepository.findByReservationId(id).get()
+    }
+
     fun updateLocation(location: Location): Location {
         locationRepository.findById(location.id)
             .orElseThrow { LocationNotFoundException() }

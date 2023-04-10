@@ -353,25 +353,19 @@ paths:
           $ref: './components/responses/Unauthorized.yaml'
         '404':
           $ref: './components/responses/NotFound.yaml'
-  /locations/{locationId}/reservations:
+  /reservations/tables/{tableId}:
     post:
       summary: Create a reservation for a table at the specified location
+      operationId: createReservation
       tags:
         - Reservation
       parameters:
         - in: path
-          name: locationId
+          name: tableId
           required: true
-          description: ID of the location
+          description: ID of the table
           schema:
-            type: string
-            format: uuid
-        - in: header
-          name: Authorization
-          description: JWT token for authorization
-          required: true
-          schema:
-            type: string
+            type: integer
       requestBody:
         description: Request body for creating a reservation
         required: true
@@ -392,9 +386,13 @@ paths:
           $ref: './components/responses/Unauthorized.yaml'
         '404':
           $ref: './components/responses/NotFound.yaml'
+        '409':
+          $ref: './components/responses/ReservationConflict.yaml'
+
   /reservations/{reservationId}:
     get:
       summary: Get a reservation by ID
+      operationId: getReservationById
       tags:
         - Reservation
       parameters:
@@ -415,39 +413,9 @@ paths:
           $ref: './components/responses/Unauthorized.yaml'
         '404':
           $ref: './components/responses/NotFound.yaml'
-    put:
-      summary: Update a reservation by ID
-      tags:
-        - Reservation
-      parameters:
-        - in: path
-          name: reservationId
-          schema:
-            type: integer
-          required: true
-          description: ID of the reservation to update
-      requestBody:
-        description: The reservation object to update
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components/schemas/ReservationInput.yaml'
-      responses:
-        '200':
-          description: Successfully updated the reservation
-          content:
-            application/json:
-              schema:
-                $ref: './components/schemas/ReservationOutput.yaml'
-        '400':
-          $ref: './components/responses/BadRequest.yaml'
-        '401':
-          $ref: './components/responses/Unauthorized.yaml'
-        '404':
-          $ref: './components/responses/NotFound.yaml'
     delete:
       summary: Delete a reservation
+      operationId: deleteReservation
       tags:
         - Reservation
       parameters:

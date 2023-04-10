@@ -57,6 +57,23 @@ public class LocationRepository {
         }
     }
 
+    public Optional<Location> findByReservationId(int id) {
+        try {
+            Integer locationId = jdbcTemplate.queryForObject("""
+                SELECT l.id FROM restaurant_location l
+                JOIN "table" t ON l.id = t.location_id
+                JOIN reservation r on t.id = r.table_id
+                WHERE r.id = :id
+                """,
+                Map.of("id", id),
+                Integer.class
+            );
+            return locationId == null ? Optional.empty() : findById(locationId);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
+    }
+
     public Optional<Location> findById(int id) {
         try {
             Map<DayOfWeek, DayWorkingHours> workingHours = getWorkingHours(id);

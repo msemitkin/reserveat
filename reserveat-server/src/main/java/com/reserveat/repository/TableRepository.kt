@@ -12,7 +12,7 @@ class TableRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate
 ) {
     fun save(table: Table): Table {
-        return jdbcTemplate.queryForObject(
+        return jdbcTemplate.queryForObjectSafely(
             """
                 INSERT INTO "table" (location_id, number_of_seats)
                 VALUES (:location_id, :number_of_seats)
@@ -37,6 +37,16 @@ class TableRepository(
         queryForStream.use {
             return queryForStream.toList()
         }
+    }
+
+    fun findById(tableId: Int): Table? {
+        return jdbcTemplate.queryForObjectSafely(
+            """
+            SELECT * FROM "table" WHERE id = :id
+            """,
+            mapOf("id" to tableId),
+            TableRowMapper
+        )
     }
 }
 
