@@ -478,3 +478,31 @@ paths:
           $ref: './components/responses/Unauthorized.yaml'
         '404':
           $ref: './components/responses/NotFound.yaml'
+  /locations/{locationId}/free-slots:
+    get:
+      summary: get free slots for a location
+      tags:
+        - Reservation
+      operationId: getFreeSlots
+      parameters:
+        - in: path
+          name: locationId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: date
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components/schemas/FreeSlotsOutput.yaml'
+        '404':
+          $ref: './components/responses/NotFound.yaml'

@@ -23,7 +23,7 @@ open class ReservationService(
     }
 
     fun createReservation(reservation: Reservation): Reservation {
-        validateReservation(reservation);
+        validateReservation(reservation)
         return reservationRepository.save(reservation)
     }
 
@@ -33,6 +33,11 @@ open class ReservationService(
 
     fun deleteReservation(reservationId: Int) {
         reservationRepository.deleteById(reservationId)
+    }
+
+    fun getFreeSlots(locationId: Int, forDate: LocalDate): Map<Table, List<Slot>> {
+        val tables = tableRepository.findByLocationId(locationId)
+        return tables.associateWith { table -> getFreeSlots(table, forDate) }
     }
 
     private fun validateReservation(reservation: Reservation) {
@@ -69,13 +74,14 @@ open class ReservationService(
 
     private fun getFreeSlots(table: Table, forDate: LocalDate): List<Slot> {
         val location = locationRepository.findById(table.locationId).get()
-        val dayWorkingHours = location.workingHours[forDate.dayOfWeek] ?: cannotBeReserved()
+        val dayWorkingHours = location.workingHours[forDate.dayOfWeek]
+            ?: return emptyList()
 
         val reservations = getReservations(table.id!!, forDate)
             .sortedBy(Reservation::startTime)
 
         val freeSlots = ArrayList<Slot>()
-        var start = LocalDateTime.of(forDate, dayWorkingHours.from);
+        var start = LocalDateTime.of(forDate, dayWorkingHours.from)
         var index = 0
         while (index < reservations.size) {
             val reservation = reservations[index]
