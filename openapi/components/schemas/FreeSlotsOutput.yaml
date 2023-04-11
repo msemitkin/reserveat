@@ -1,0 +1,8 @@
+type: object
+properties:
+  table:
+    $ref: './TableOutput.yaml'
+  freeSlots:
+    type: array
+    items:
+      $ref: './HoursOutput.yaml'
