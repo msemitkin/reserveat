@@ -18,6 +18,11 @@ properties:
     format: double
     description: The longitude coordinate of the location.
     example: -74.0060
+  workingHours:
+    type: array
+    items:
+      $ref: './HoursInput.yaml'
+    description: Operating hours for the restaurant location
   restaurant_id:
     type: integer
     description: Unique identifier of the restaurant that the location belongs to.

@@ -5,6 +5,7 @@ import java.util.Map;
 
 public record Location(
     Integer id,
+    int restaurantId,
     String address,
     Double latitude,
     Double longitude,

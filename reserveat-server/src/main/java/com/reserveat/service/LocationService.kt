@@ -14,8 +14,8 @@ class LocationService(
     private val distanceCalculator: DistanceCalculator
 ) {
 
-    fun createLocation(restaurantId: Int, location: Location): Location {
-        return locationRepository.save(restaurantId, location)
+    fun createLocation(location: Location): Location {
+        return locationRepository.save(location)
     }
 
     fun getLocation(locationId: Int): Location {

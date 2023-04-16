@@ -7,7 +7,6 @@ import com.reserveat.web.api.LocationApi;
 import com.reserveat.web.mapper.LocationMapper;
 import com.reserveat.web.model.LocationInputDto;
 import com.reserveat.web.model.LocationOutputDto;
-import com.reserveat.web.model.LocationWithRestaurantOutputDto;
 import com.reserveat.web.model.LocationsWithRestaurantOutputDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,8 +23,8 @@ public class LocationController implements LocationApi {
 
     @Override
     public ResponseEntity<LocationOutputDto> createLocation(Integer restaurantId, LocationInputDto locationInputDto) {
-        Location location = LocationMapper.toLocation(locationInputDto);
-        Location savedLocation = locationService.createLocation(restaurantId, location);
+        Location location = LocationMapper.toLocation(locationInputDto, restaurantId);
+        Location savedLocation = locationService.createLocation(location);
         LocationOutputDto locationOutputDto = LocationMapper.fromLocation(savedLocation);
         return ResponseEntity.ok(locationOutputDto);
     }
@@ -39,7 +38,8 @@ public class LocationController implements LocationApi {
 
     @Override
     public ResponseEntity<LocationOutputDto> updateLocation(Integer locationId, LocationInputDto locationInputDto) {
-        Location location = LocationMapper.toLocation(locationId, locationInputDto);
+        Location existingLocation = locationService.getLocation(locationId);
+        Location location = LocationMapper.toLocation(locationId, locationInputDto, existingLocation.restaurantId());
         Location updatedLocation = locationService.updateLocation(location);
         LocationOutputDto locationOutputDto = LocationMapper.fromLocation(updatedLocation);
         return ResponseEntity.ok(locationOutputDto);
@@ -55,12 +55,7 @@ public class LocationController implements LocationApi {
     public ResponseEntity<LocationsWithRestaurantOutputDto> getNearbyLocations(Float latitude, Float longitude, Integer radius) {
         List<RestaurantLocation> nearbyLocations = locationService.getNearbyLocations(latitude, longitude, radius);
         var locationWithRestaurantOutputDtos = nearbyLocations.stream()
-            .map(location -> new LocationWithRestaurantOutputDto()
-                .id(location.id())
-                .restaurantId(location.restaurantId())
-                .address(location.address())
-                .latitude(location.latitude())
-                .longitude(location.longitude()))
+            .map(LocationMapper::toDto)
             .toList();
         return ResponseEntity.ok(new LocationsWithRestaurantOutputDto().locations(locationWithRestaurantOutputDtos));
     }

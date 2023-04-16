@@ -28,11 +28,12 @@ public class LocationRepository {
     }
 
     @Transactional
-    public Location save(int restaurantId, Location location) {
-        int locationId = saveLocation(restaurantId, location);
+    public Location save(Location location) {
+        int locationId = saveLocation(location.restaurantId(), location);
         saveLocationWorkingHours(locationId, location.workingHours());
         return new Location(
             locationId,
+            location.restaurantId(),
             location.address(),
             location.latitude(),
             location.longitude(),
@@ -82,6 +83,7 @@ public class LocationRepository {
                 Map.of("id", id),
                 (rs, rowNum) -> new Location(
                     rs.getInt("id"),
+                    rs.getInt("restaurant_id"),
                     rs.getString("address"),
                     rs.getDouble("latitude"),
                     rs.getDouble("longitude"),
