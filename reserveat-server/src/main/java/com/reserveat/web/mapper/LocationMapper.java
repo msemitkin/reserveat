@@ -1,8 +1,7 @@
 package com.reserveat.web.mapper;
 
-import com.reserveat.domain.Location;
 import com.reserveat.domain.DayWorkingHours;
-import com.reserveat.domain.RestaurantLocation;
+import com.reserveat.domain.Location;
 import com.reserveat.web.model.HoursInputDto;
 import com.reserveat.web.model.LocationInputDto;
 import com.reserveat.web.model.LocationOutputDto;
@@ -58,7 +57,13 @@ public class LocationMapper {
         );
     }
 
-    public static LocationWithRestaurantOutputDto toDto(RestaurantLocation location) {
+    public static List<LocationWithRestaurantOutputDto> toDtos(List<Location> locations) {
+        return locations.stream()
+            .map(LocationMapper::toDto)
+            .toList();
+    }
+
+    public static LocationWithRestaurantOutputDto toDto(Location location) {
         List<HoursInputDto> hoursInputDtos = toDto(location.workingHours());
         return new LocationWithRestaurantOutputDto()
             .id(location.id())

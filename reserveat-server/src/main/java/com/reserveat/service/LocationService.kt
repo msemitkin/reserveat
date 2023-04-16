@@ -2,7 +2,6 @@ package com.reserveat.service
 
 import com.reserveat.domain.Location
 import com.reserveat.domain.LocationCoordinates
-import com.reserveat.domain.RestaurantLocation
 import com.reserveat.domain.exception.LocationNotFoundException
 import com.reserveat.repository.LocationRepository
 import org.springframework.stereotype.Service
@@ -42,7 +41,7 @@ class LocationService(
         latitude: Double,
         longitude: Double,
         radiusMeters: Int
-    ): List<RestaurantLocation> {
+    ): List<Location> {
         val coordinates: List<LocationCoordinates> = locationRepository.locationsCoordinates
         val filteredLocations = coordinates.filter { coords ->
             distanceCalculator.calculate(
@@ -60,7 +59,7 @@ class LocationService(
             .filter { it.isPresent }
             .map { it.get() }
             .map { location ->
-                RestaurantLocation(
+                Location(
                     location.id,
                     locationIdRestaurantId[location.id]!!,
                     location.address,
@@ -72,6 +71,9 @@ class LocationService(
             }
             .toList()
     }
+
+    fun getLocationsByCriteria(criteria: GetLocationsCriteria): List<Location> {
+        //TODO filter locations by criteria
+        return locationRepository.findAll();
+    }
 }
-
-

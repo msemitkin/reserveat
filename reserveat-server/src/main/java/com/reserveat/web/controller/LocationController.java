@@ -1,10 +1,11 @@
 package com.reserveat.web.controller;
 
 import com.reserveat.domain.Location;
-import com.reserveat.domain.RestaurantLocation;
+import com.reserveat.service.GetLocationsCriteria;
 import com.reserveat.service.LocationService;
 import com.reserveat.web.api.LocationApi;
 import com.reserveat.web.mapper.LocationMapper;
+import com.reserveat.web.model.GetLocationsByCriteriaCriteriaParameterDto;
 import com.reserveat.web.model.LocationInputDto;
 import com.reserveat.web.model.LocationOutputDto;
 import com.reserveat.web.model.LocationsWithRestaurantOutputDto;
@@ -53,10 +54,28 @@ public class LocationController implements LocationApi {
 
     @Override
     public ResponseEntity<LocationsWithRestaurantOutputDto> getNearbyLocations(Float latitude, Float longitude, Integer radius) {
-        List<RestaurantLocation> nearbyLocations = locationService.getNearbyLocations(latitude, longitude, radius);
-        var locationWithRestaurantOutputDtos = nearbyLocations.stream()
-            .map(LocationMapper::toDto)
-            .toList();
+        List<Location> nearbyLocations = locationService.getNearbyLocations(latitude, longitude, radius);
+        var locationWithRestaurantOutputDtos = LocationMapper.toDtos(nearbyLocations);
         return ResponseEntity.ok(new LocationsWithRestaurantOutputDto().locations(locationWithRestaurantOutputDtos));
+    }
+
+    @Override
+    public ResponseEntity<LocationsWithRestaurantOutputDto> getLocationsByCriteria(
+        GetLocationsByCriteriaCriteriaParameterDto criteria
+    ) {
+        validateCriteria(criteria);
+        List<Location> locations = locationService.getLocationsByCriteria(new GetLocationsCriteria(
+            criteria.getVisitors(),
+            criteria.getName(),
+            criteria.getDateTimeFrom(),
+            criteria.getDateTimeTo()
+        ));
+        return ResponseEntity.ok(new LocationsWithRestaurantOutputDto().locations(LocationMapper.toDtos(locations)));
+    }
+
+    private void validateCriteria(GetLocationsByCriteriaCriteriaParameterDto criteria) {
+        if (criteria.getDateTimeFrom() == null ^ criteria.getDateTimeTo() == null) {
+            throw new IllegalArgumentException("Both dateTimeFrom and dateTimeTo must be specified or skipped");
+        }
     }
 }
