@@ -506,3 +506,33 @@ paths:
                   $ref: './components/schemas/FreeSlotsOutput.yaml'
         '404':
           $ref: './components/responses/NotFound.yaml'
+  /locations:
+    get:
+      summary: Get locations by criteria
+      tags:
+        - Location
+      operationId: getLocationsByCriteria
+      parameters:
+        - in: query
+          name: criteria
+          schema:
+            type: object
+            properties:
+              visitors:
+                type: integer
+                minimum: 1
+              name:
+                type: string
+              dateTimeFrom:
+                type: string
+                format: date-time
+              dateTimeTo:
+                type: string
+                format: date-time
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components/schemas/LocationsWithRestaurantOutput.yaml'

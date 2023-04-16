@@ -61,11 +61,11 @@ public class LocationRepository {
     public Optional<Location> findByReservationId(int id) {
         try {
             Integer locationId = jdbcTemplate.queryForObject("""
-                SELECT l.id FROM restaurant_location l
-                JOIN "table" t ON l.id = t.location_id
-                JOIN reservation r on t.id = r.table_id
-                WHERE r.id = :id
-                """,
+                    SELECT l.id FROM restaurant_location l
+                    JOIN "table" t ON l.id = t.location_id
+                    JOIN reservation r on t.id = r.table_id
+                    WHERE r.id = :id
+                    """,
                 Map.of("id", id),
                 Integer.class
             );
@@ -73,6 +73,22 @@ public class LocationRepository {
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
         }
+    }
+
+    public List<Location> findAll() {
+        Set<Integer> ids;
+        try (var stream = jdbcTemplate.queryForStream(
+            "SELECT id FROM restaurant_location",
+            Map.of(),
+            (rs, rosNum) -> rs.getInt("id")
+        )
+        ) {
+            ids = stream.collect(Collectors.toSet());
+        }
+        return ids.stream().map(this::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toList();
     }
 
     public Optional<Location> findById(int id) {
