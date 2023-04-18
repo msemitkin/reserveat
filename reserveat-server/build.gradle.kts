@@ -22,6 +22,7 @@ dependencies {
     implementation("org.postgresql:postgresql")
     implementation("org.flywaydb:flyway-core")
     implementation(kotlin("stdlib-jdk8"))
+    testImplementation("org.testng:testng:7.1.0")
 }
 
 tasks.getByName<Test>("test") {
