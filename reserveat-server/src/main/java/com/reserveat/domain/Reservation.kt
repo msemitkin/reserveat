@@ -7,4 +7,5 @@ data class Reservation(
     var tableId: Int,
     val startTime: LocalDateTime,
     val endTime: LocalDateTime,
+    val numberOfPeople: Int
 )

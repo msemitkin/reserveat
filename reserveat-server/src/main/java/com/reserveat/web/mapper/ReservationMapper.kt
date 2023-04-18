@@ -10,7 +10,8 @@ fun ReservationInputDto.toReservation(tableId: Int): Reservation {
     return Reservation(
         startTime = startTime,
         endTime = endTime,
-        tableId = tableId
+        tableId = tableId,
+        numberOfPeople = this.numberOfPeople
     )
 }
 

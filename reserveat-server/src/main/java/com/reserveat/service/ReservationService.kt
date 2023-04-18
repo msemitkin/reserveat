@@ -6,6 +6,7 @@ import com.reserveat.repository.LocationRepository
 import com.reserveat.repository.ReservationRepository
 import com.reserveat.repository.TableRepository
 import com.reserveat.web.exception.ReservationConflictException
+import com.reserveat.web.exception.ReservationValidationException
 import com.reserveat.web.exception.ResourceNotFoundException
 import org.springframework.stereotype.Service
 import java.time.Duration
@@ -49,18 +50,22 @@ open class ReservationService(
         validateDurationDoesNotExceedMaxAllowed(slot)
         validateSlotIsFree(slot, table)
 
+        if (reservation.numberOfPeople > table.numberOfSeats) {
+            throw ReservationValidationException("The number of people is greater than the number of seats at the table")
+        }
+
         reservationRepository.save(reservation)
     }
 
     private fun validateReservationEndsOnTheDayOfStart(slot: Slot) {
         if (!slot.from.toLocalDate().equals(slot.to.toLocalDate())) {
-            throw RuntimeException("Reservation must start and end on the same day")
+            throw ReservationValidationException("Reservation must start and end on the same day")
         }
     }
 
     private fun validateDurationDoesNotExceedMaxAllowed(slot: Slot) {
         if (slot.getDuration() > MAX_DURATION) {
-            throw RuntimeException("Reservation is too long")
+            throw ReservationValidationException("Reservation is too long")
         }
     }
 

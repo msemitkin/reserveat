@@ -15,15 +15,16 @@ class ReservationRepository(
     fun save(reservation: Reservation): Reservation {
         return jdbcTemplate.queryForObjectSafely(
             """
-            INSERT INTO reservation (table_id, start, "end", reservator_id)
-            VALUES (:table_id, :start, :end, :reservator_id)
+            INSERT INTO reservation (table_id, start, "end", reservator_id, number_of_people)
+            VALUES (:table_id, :start, :end, :reservator_id, :number_of_people)
             RETURNING id
             """,
             mapOf(
                 "table_id" to reservation.tableId,
                 "start" to reservation.startTime,
                 "end" to reservation.endTime,
-                "reservator_id" to -1 //TODO replace with actual user id
+                "reservator_id" to -1, //TODO replace with actual user id
+                "number_of_people" to reservation.numberOfPeople
             )
         ) { rs, _ -> reservation.copy(id = rs.getInt("id")) }!!
     }
@@ -67,5 +68,6 @@ object ReservationRowMapper : RowMapper<Reservation> {
             tableId = rs.getInt("table_id"),
             startTime = rs.getTimestamp("start").toLocalDateTime(),
             endTime = rs.getTimestamp("end").toLocalDateTime(),
+            numberOfPeople = rs.getInt("number_of_people")
         )
 }
