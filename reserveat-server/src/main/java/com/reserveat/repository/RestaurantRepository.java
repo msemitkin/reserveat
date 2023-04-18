@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,6 +45,12 @@ public class RestaurantRepository {
             return Optional.ofNullable(restaurant);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
+        }
+    }
+
+    public List<Restaurant> getAll() {
+        try (var stream = jdbcTemplate.queryForStream("select * from restaurant", Map.of(), RESTAURANT_ROW_MAPPER)) {
+            return stream.toList();
         }
     }
 

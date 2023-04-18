@@ -529,6 +529,9 @@ paths:
               dateTimeTo:
                 type: string
                 format: date-time
+            required:
+              - dateTimeFrom
+              - dateTimeTo
       responses:
         '200':
           description: OK

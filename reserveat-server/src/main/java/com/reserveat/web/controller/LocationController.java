@@ -3,6 +3,7 @@ package com.reserveat.web.controller;
 import com.reserveat.domain.Location;
 import com.reserveat.service.GetLocationsCriteria;
 import com.reserveat.service.LocationService;
+import com.reserveat.service.Slot;
 import com.reserveat.web.api.LocationApi;
 import com.reserveat.web.mapper.LocationMapper;
 import com.reserveat.web.model.GetLocationsByCriteriaCriteriaParameterDto;
@@ -67,15 +68,14 @@ public class LocationController implements LocationApi {
         List<Location> locations = locationService.getLocationsByCriteria(new GetLocationsCriteria(
             criteria.getVisitors(),
             criteria.getName(),
-            criteria.getDateTimeFrom(),
-            criteria.getDateTimeTo()
+            new Slot(criteria.getDateTimeFrom(), criteria.getDateTimeTo())
         ));
         return ResponseEntity.ok(new LocationsWithRestaurantOutputDto().locations(LocationMapper.toDtos(locations)));
     }
 
     private void validateCriteria(GetLocationsByCriteriaCriteriaParameterDto criteria) {
-        if (criteria.getDateTimeFrom() == null ^ criteria.getDateTimeTo() == null) {
-            throw new IllegalArgumentException("Both dateTimeFrom and dateTimeTo must be specified or skipped");
+        if (criteria.getDateTimeFrom().isAfter(criteria.getDateTimeTo())) {
+            throw new IllegalArgumentException("Time range is invalid");
         }
     }
 }
