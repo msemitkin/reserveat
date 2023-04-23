@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("java")
+    id("org.springframework.boot") version "3.0.3"
     id("org.openapi.generator") version "6.2.0"
     kotlin("jvm") version "1.8.20-RC"
 }
@@ -87,4 +88,8 @@ compileKotlin.kotlinOptions {
 val compileTestKotlin: KotlinCompile by tasks
 compileTestKotlin.kotlinOptions {
     jvmTarget = "1.8"
+}
+
+tasks.withType<Jar> {
+    enabled = false
 }
