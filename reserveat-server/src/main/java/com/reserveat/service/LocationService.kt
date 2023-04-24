@@ -2,15 +2,20 @@ package com.reserveat.service
 
 import com.reserveat.domain.Location
 import com.reserveat.domain.LocationCoordinates
+import com.reserveat.domain.Restaurant
+import com.reserveat.domain.Table
 import com.reserveat.domain.exception.LocationNotFoundException
 import com.reserveat.repository.LocationRepository
+import com.reserveat.repository.RestaurantRepository
 import org.springframework.stereotype.Service
 
 
 @Service
 class LocationService(
     private val locationRepository: LocationRepository,
-    private val distanceCalculator: DistanceCalculator
+    private val distanceCalculator: DistanceCalculator,
+    private val restaurantRepository: RestaurantRepository,
+    private val reservationService: ReservationService
 ) {
 
     fun createLocation(location: Location): Location {
@@ -73,7 +78,29 @@ class LocationService(
     }
 
     fun getLocationsByCriteria(criteria: GetLocationsCriteria): List<Location> {
-        //TODO filter locations by criteria
-        return locationRepository.findAll();
+        val restaurantsByName = getRestaurantsByName(criteria)
+        val locationsByName = restaurantsByName.flatMap { locationRepository.getByRestaurantId(it.id) }
+        val locationsWithSlots: Map<Location, Map<Table, List<Slot>>> = locationsByName.asSequence()
+            .associateWith { reservationService.getFreeSlots(it.id, criteria.slot.from.toLocalDate()) }
+            .filter { it.value.isNotEmpty() }
+            .toMap()
+        return locationsWithSlots
+            .filter { (_, tableSlots) ->
+                tableSlots.any { (table, slots) ->
+                    slots.any { slot ->
+                        slot.contains(criteria.slot)
+                                && (criteria.numberOfVisitors == null || table.numberOfSeats >= criteria.numberOfVisitors)
+                    }
+                }
+            }.keys.toList()
+    }
+
+    private fun getRestaurantsByName(criteria: GetLocationsCriteria): List<Restaurant> {
+        val restaurants = restaurantRepository.all
+        return if (criteria.name != null) {
+            restaurants.filter { it.name.lowercase().contains(criteria.name.lowercase()) }
+        } else {
+            restaurants
+        }
     }
 }

@@ -42,6 +42,15 @@ public class LocationRepository {
         );
     }
 
+    public List<Location> getByRestaurantId(int restaurantId) {
+        List<Integer> locations = getLocationIdsByRestaurantId(restaurantId);
+        return locations.stream()
+            .map(this::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .toList();
+    }
+
     public List<LocationCoordinates> getLocationsCoordinates() {
         try (
             var stream = jdbcTemplate.queryForStream("""
@@ -220,5 +229,15 @@ public class LocationRepository {
             "DELETE FROM location_working_hour WHERE location_id = :id",
             Map.of("id", locationId)
         );
+    }
+
+    private List<Integer> getLocationIdsByRestaurantId(int restaurantId) {
+        try (var stream = jdbcTemplate.queryForStream(
+            "SELECT restaurant_location.id FROM restaurant_location WHERE restaurant_location.restaurant_id = :id",
+            Map.of("id", restaurantId),
+            (rs, rowNum) -> rs.getInt("id")
+        )) {
+            return stream.toList();
+        }
     }
 }
